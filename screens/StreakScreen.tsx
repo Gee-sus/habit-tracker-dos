@@ -44,9 +44,26 @@ export const StreakScreen = () => {
     return () => unsubscribe();
   }, [userId]);
 
+  const totalStreak = habits.reduce(
+    (sum, habit) => sum + (habit.streak_count || 0),
+    0
+  );
+
+  const averageStreak = habits.length > 0 ? totalStreak / habits.length : 0;
+
   return (
-    <View>
-      <Text>steak screen</Text>
+    <View bg={darkThemeColors.background.base} p="$4" f={1}>
+      <View 
+      bg={darkThemeColors.background.card}
+      p="$4"
+      br="$4"
+      mb="$4"
+    
+
+      >
+        <Text color={darkThemeColors.text.emphasized}>Total Streak: {totalStreak}</Text>
+        <Text color={darkThemeColors.text.emphasized}>Average Streak: {averageStreak.toFixed(1)}</Text>
+      </View>
     </View>
   );
 };
