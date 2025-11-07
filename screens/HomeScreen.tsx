@@ -1,8 +1,8 @@
 import { View, Text, ScrollView } from "tamagui";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { db } from "../firebaseConfig";
 import { useAuth } from "../contexts/AuthContext";
-import { Swipeable, RectButton } from "react-native-gesture-handler";
+import { Swipeable } from "react-native-gesture-handler";
 import {
   collection,
   query,
@@ -13,7 +13,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { darkThemeColors } from "../utils/colors";
-import { Ionicons, FontAwesome6 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Habit {
   id: string;
@@ -29,6 +29,7 @@ export const HomeScreen = () => {
   const { userId } = useAuth();
 
   const [habits, setHabits] = useState<Habit[]>([]);
+  const swipeableRefs = useRef<Record<string, Swipeable | null>>({});
 
   useEffect(() => {
     if (!userId) return;
@@ -83,7 +84,7 @@ export const HomeScreen = () => {
   };
 
   const renderRightActions = (habit: Habit) => (
-    <RectButton
+    <View
       style={{
         flex: 1,
         backgroundColor: "#14532d",
@@ -91,7 +92,6 @@ export const HomeScreen = () => {
         alignItems: "flex-start",
         paddingHorizontal: 28,
       }}
-      onPress={() => handleIncreaseStreak(habit.id, habit.streak_count)}
     >
       <Ionicons name="checkmark" size={28} color={darkThemeColors.text.emphasized} />
       <Text
@@ -102,11 +102,11 @@ export const HomeScreen = () => {
       >
         Increase
       </Text>
-    </RectButton>
+    </View>
   );
 
   const renderLeftActions = (habit: Habit) => (
-    <RectButton
+    <View
       style={{
         flex: 1,
         backgroundColor: "#7f1d1d",
@@ -114,18 +114,19 @@ export const HomeScreen = () => {
         alignItems: "flex-end",
         paddingHorizontal: 28,
       }}
-      onPress={() => handleDeleteHabit(habit.id)}
     >
-      <Ionicons name="trash" size={28} color={darkThemeColors.text.emphasized} />
       <Text
         color={darkThemeColors.text.emphasized}
         fontWeight="700"
         fontSize="$5"
         mt="$1"
+        mb="$1"
+        textAlign="right"
       >
         Delete
       </Text>
-    </RectButton>
+      <Ionicons name="trash" size={28} color={darkThemeColors.text.emphasized} />
+    </View>
   );
 
   return (
@@ -154,12 +155,25 @@ export const HomeScreen = () => {
             return (
               <Swipeable
                 key={habit.id}
+                ref={(ref) => {
+                  swipeableRefs.current[habit.id] = ref;
+                }}
                 renderLeftActions={() => renderLeftActions(habit)}
                 renderRightActions={() => renderRightActions(habit)}
                 overshootLeft={false}
                 overshootRight={false}
+                onSwipeableOpen={(direction) => {
+                  if (direction === "right") {
+                    handleIncreaseStreak(habit.id, habit.streak_count);
+                    swipeableRefs.current[habit.id]?.close();
+                  }
+                  if (direction === "left") {
+                    handleDeleteHabit(habit.id);
+                    swipeableRefs.current[habit.id]?.close();
+                  }
+                }}
               >
-                <View style={{ width: "100%", marginBottom: 12 }}>
+                <View style={{ width: "100%", marginBottom: 12, borderRadius: 18, overflow: "hidden" }}>
                   <View
                     bg={
                       isRaised
