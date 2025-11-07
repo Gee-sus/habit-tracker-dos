@@ -58,11 +58,24 @@ export const StreakScreen = () => {
       p="$4"
       br="$4"
       mb="$4"
+      borderWidth={1}
+      borderColor={darkThemeColors.border.subtle}
     
 
       >
-        <Text color={darkThemeColors.text.emphasized}>Total Streak: {totalStreak}</Text>
-        <Text color={darkThemeColors.text.emphasized}>Average Streak: {averageStreak.toFixed(1)}</Text>
+        <Text 
+        color={darkThemeColors.text.emphasized}
+        fontSize="$6"
+        fontWeight="700"
+
+        
+        >Total Streak: {totalStreak}</Text>
+        <Text 
+        color={darkThemeColors.text.secondary}
+        fontSize="$5"
+        mt="$2"
+        
+        >Average Streak: {averageStreak.toFixed(1)}</Text>
       </View>
     </View>
   );
