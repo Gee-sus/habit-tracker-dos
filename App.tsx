@@ -1,4 +1,4 @@
-import { StatusBar } from "expo-status-bar";
+
 import { StyleSheet } from "react-native";
 import { Auth } from "./components/auth";
 import { TamaguiProvider, View, Text } from "tamagui";

@@ -84,8 +84,8 @@ export const StreakScreen = () => {
       borderWidth={1}
       >
         <Text color={darkThemeColors.text.emphasized} ta="center">
-          {" "}
-          Top Streaks{" "}
+        
+          Top Streaks
         </Text>
         {topHabits.length === 0 ? (
           <Text>No habits yet.</Text>
