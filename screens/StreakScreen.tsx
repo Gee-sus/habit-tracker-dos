@@ -13,6 +13,7 @@ interface Habit {
   createdAt: any;
   userId: string;
   frequncy: string;
+  completedDates?: string [];
 }
 
 export const StreakScreen = () => {

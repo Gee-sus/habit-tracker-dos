@@ -1,13 +1,15 @@
+import "react-native-reanimated";
+import "react-native-gesture-handler";
 
-import { StyleSheet } from "react-native";
-import { Auth } from "./components/auth";
-import { TamaguiProvider, View, Text } from "tamagui";
-import config from "./tamagui.config";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { AppNavigator } from "./navigators/AppNavigator";
 import { NavigationContainer } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native";
+import { TamaguiProvider, View } from "tamagui";
+
+import { AuthProvider } from "./contexts/AuthContext";
+import { AppNavigator } from "./navigators/AppNavigator";
+import config from "./tamagui.config";
 
 export default function App() {
   return (

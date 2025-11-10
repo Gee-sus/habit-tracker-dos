@@ -5,27 +5,33 @@ import { StreakScreen } from "../screens/StreakScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { darkThemeColors } from "../utils/colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Pressable, TouchableOpacity } from "react-native";
+import { Button, Pressable, TouchableOpacity } from "react-native";
 import { BottomTabBarButtonProps } from "@react-navigation/bottom-tabs";
-
+import { Ticker } from "../components/Ticker";
+import Entypo from "@expo/vector-icons/Entypo";
+import { useState } from "react";
 
 const Tab = createBottomTabNavigator();
 
 // Custom Tab Bar Button with circular highlight and gradient
-const CustomTabBarButton = ({ children, onPress, accessibilityState }: BottomTabBarButtonProps) => {
+const CustomTabBarButton = ({
+  children,
+  onPress,
+  accessibilityState,
+}: BottomTabBarButtonProps) => {
   const isActive = accessibilityState?.selected;
-  
+
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
       style={{
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       {isActive ? (
@@ -53,12 +59,7 @@ const CustomTabBarButton = ({ children, onPress, accessibilityState }: BottomTab
           {children}
         </View>
       ) : (
-        <View
-          ai="center"
-          jc="center"
-          minWidth={60}
-          minHeight={40}
-        >
+        <View ai="center" jc="center" minWidth={60} minHeight={40}>
           {children}
         </View>
       )}
@@ -68,6 +69,8 @@ const CustomTabBarButton = ({ children, onPress, accessibilityState }: BottomTab
 
 export const MainLayout = () => {
   const insets = useSafeAreaInsets();
+
+  const [value, setValue] = useState(0);
 
   const handleLogout = async () => {
     try {
@@ -86,15 +89,15 @@ export const MainLayout = () => {
           backgroundColor: darkThemeColors.background.card, // L=5% (main card surface)
           borderBottomWidth: 1,
           borderBottomColor: darkThemeColors.border.bottom, // L=5% (gradient from 0% base)
-          // Note: React Navigation doesn't support borderTopColor directly, 
+          // Note: React Navigation doesn't support borderTopColor directly,
           // but we can use elevation or shadows for depth
         },
         headerTintColor: darkThemeColors.text.primary, // L=90% (foreground text)
         headerTitleStyle: {
           color: darkThemeColors.text.emphasized, // L=95% (closest to user)
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
-        
+
         // Tab bar styling with dark theme and gradient borders
         tabBarStyle: {
           backgroundColor: darkThemeColors.background.card, // L=5% (main card surface)
@@ -112,20 +115,17 @@ export const MainLayout = () => {
         },
         tabBarActiveTintColor: darkThemeColors.text.emphasized, // L=95% (closest to user)
         tabBarInactiveTintColor: darkThemeColors.text.muted, // L=50% (muted)
-        tabBarActiveBackgroundColor: 'transparent', // Transparent - using custom button instead
-        tabBarInactiveBackgroundColor: 'transparent',
+        tabBarActiveBackgroundColor: "transparent", // Transparent - using custom button instead
+        tabBarInactiveBackgroundColor: "transparent",
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '600',
+          fontWeight: "600",
         },
         tabBarButton: (props) => <CustomTabBarButton {...props} />,
-        
+
         // Logout button with light-from-above effect
         headerRight: () => (
-          <Pressable
-            onPress={handleLogout}
-            style={{ marginRight: 12 }}
-          >
+          <Pressable onPress={handleLogout} style={{ marginRight: 12 }}>
             {({ pressed }: { pressed: boolean }) => (
               <View
                 bg={
@@ -138,12 +138,12 @@ export const MainLayout = () => {
                 br="$3"
                 borderWidth={1}
                 borderTopColor={
-                  pressed 
+                  pressed
                     ? darkThemeColors.interactive.pressedTop // L=12% (lighter, shining when pressed)
                     : darkThemeColors.border.top // L=10% (lighter, from 5% card)
                 }
                 borderBottomColor={
-                  pressed 
+                  pressed
                     ? darkThemeColors.interactive.pressedBottom // L=6% (darker when pressed)
                     : darkThemeColors.border.bottom // L=5% (from 0% base)
                 }
@@ -186,34 +186,55 @@ export const MainLayout = () => {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ 
-            title: "My Habits",
-            tabBarIcon: ({ color, size }) => (
-                <FontAwesome5 name="scroll" size={size} color={color} />
-            )
+        options={{
+          title: "My Habits",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome5 name="scroll" size={size} color={color} />
+          ),
         }}
       />
 
       <Tab.Screen
         name="Streaks"
         component={StreakScreen}
-        options={{ 
-            title: "My Streaks",
-            tabBarIcon: ({ color, size }) => (
-                <FontAwesome5 name="clipboard-list" size={size} color={color} />
-            )
+        options={{
+          title: "My Streaks",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome5 name="clipboard-list" size={size} color={color} />
+          ),
         }}
       />
 
       <Tab.Screen
-        name="HabitScreen"
-        component={AddHabitScreen}
-        options={{ 
-            title: "Add Habit",
-            tabBarIcon: ({ color, size }) => (
-                <Ionicons name="add-circle" size={size} color={color} />
-            )
+        name="Ticker"
+        
+        options={{
+          title: "Ticker",
+          tabBarIcon: ({ color, size }) => (
+            <Entypo name="stopwatch" size={size} color={color} />
+          ),
         }}
+      >
+        {() => (
+          <>
+            <Ticker value={value} />
+            <Button
+              title="random Value"
+              onPress={() => setValue(Math.floor(Math.random() * 1000000))}
+            ></Button>
+          </>
+        )}
+      </Tab.Screen>
+
+      <Tab.Screen 
+      name="HabitScreen"
+      component={AddHabitScreen}
+      options={{
+        title: "Add Habit",
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="add-circle" size={size} color={color} />
+        ),
+      }}
       />
     </Tab.Navigator>
   );
